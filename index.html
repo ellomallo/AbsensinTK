@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Pintar Anak TK Ceria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <style>
+        :root {
+            --bg-color: #e3fafc;
+            --primary-color: #ff922b;
+            --card-color: #ffffff;
+            --text-color: #495057;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#ffdeeb 2px, transparent 2px), radial-gradient(#e5dbff 2px, #e3fafc 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-color);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 10px 0px rgba(0,0,0,0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 4px solid #ffdeeb;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #fff3f3;
+        }
+
+        p.subtitle {
+            color: #748ffc;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .scanner-box {
+            width: 100%;
+            min-height: 320px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            border: 5px solid #ff922b;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #reader {
+            width: 100% !important;
+            border: none !important;
+        }
+
+        #reader #html5-qrcode-anchor-scan-type-change {
+            display: none !important;
+        }
+
+        /* Pop-up Greeting */
+        .greeting-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff9db;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .greeting-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .avatar-animation {
+            font-size: 7rem;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .greeting-card {
+            background: white;
+            padding: 40px;
+            border-radius: 40px;
+            border: 6px dashed #ffc078;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+        }
+
+        .greeting-text {
+            font-size: 2.2rem;
+            color: #e8590c;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .sub-greeting-text {
+            font-size: 1.4rem;
+            color: #15aabf;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* Overlay Awal Pengaktif Suara Google */
+        .start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ff922b;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .start-btn {
+            background: white;
+            color: #ff922b;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #e8590c;
+            margin-top: 20px;
+            transition: 0.1s;
+        }
+        .start-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #e8590c;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="startOverlay" class="start-overlay">
+        <h2>☀️ Selamat Pagi Ibu Guru! ☀️</h2>
+        <p style="margin-top: 10px; font-size: 1.1rem;">Klik tombol di bawah untuk mengaktifkan Kamera & Suara Pintar</p>
+        <button class="start-btn" onclick="mulaiAplikasi()">SIAP BELAJAR! ✨</button>
+    </div>
+
+    <div class="container">
+        <h1>☀️ Absen Pagi Ceria ✨</h1>
+        <p class="subtitle">Yuk, posisikan kartu barcode-mu di depan kamera!</p>
+        
+        <div class="scanner-box">
+            <div id="reader"></div>
+        </div>
+    </div>
+
+    <div id="greetingOverlay" class="greeting-overlay">
+        <div class="avatar-animation" id="avatarEmoji">☀️</div>
+        <div class="greeting-card">
+            <h2 class="greeting-text" id="greetingMessage">Selamat Pagi!</h2>
+            <p class="sub-greeting-text" id="subGreetingMessage">Semangat belajar ya! ❤️</p>
+            <p class="loading-text" id="loadingStatus">Menyimpan kehadiran...</p>
+        </div>
+    </div>
+
+    <script>
+        // ========================================================
+        // TAUTKAN URL GOOGLE APPS SCRIPT LAMA/BARU KAMU DI SINI
+        // ========================================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwY1JX-nEpSUVDk5O0DkYhHXgodJji7FruoejXjTZ_ZFzidSVe3KXemATioxP1o1ogw/exec";
+
+        const dataSiswa = {
+            "TK001": { nama: "Budi Utomo", emoji: "🦁" },
+            "TK002": { nama: "Siti Aminah", emoji: "🦄" },
+            "TK003": { nama: "M. Adrian", emoji: "🚀" },
+            "TK004": { nama: "Alif Pratama", emoji: "🐼" },
+            "TK005": { nama: "Rara Kirana", emoji: "🐰" }
+        };
+
+        const ucapanSemangat = [
+            "Wah, kamu hebat sekali hari ini sudah siap belajar! Semangat ya! ❤️",
+            "Hari ini hari yang cerah untuk bermain dan belajar bersama teman-teman! 🎨",
+            "Anak pintar sudah datang! Let's go kita bermain! ⭐",
+            "Senang sekali melihat senyummu hari ini! Selamat belajar ya! 🌸"
+        ];
+
+        let isProcessing = false;
+        let suaraList = [];
+        let html5QrcodeScanner = null;
+
+        // Kunci Daftar Suara Google
+        function loadSuara() {
+            if ('speechSynthesis' in window) {
+                suaraList = window.speechSynthesis.getVoices();
+            }
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadSuara;
+            loadSuara();
+        }
+
+        // Fungsi pemicu interaksi pertama (Sembuhkan Suara Bule)
+        function mulaiAplikasi() {
+            document.getElementById('startOverlay').style.display = 'none';
+            loadSuara();
+            
+            // Tes suara pancingan halus agar Google Voice langsung terkunci ke memori browser
+            if ('speechSynthesis' in window) {
+                const pancingan = new SpeechSynthesisUtterance("");
+                window.speechSynthesis.speak(pancingan);
+            }
+
+            // Jalankan kamera setelah tombol diklik
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 }, false
+            );
+            html5QrcodeScanner.render(onScanSuccess, () => {});
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            const cleanBarcode = decodedText.replace(/\*/g, "").trim();
+            const siswa = dataSiswa[cleanBarcode];
+            
+            if (siswa) {
+                tampilkanGreetingDanSimpan(cleanBarcode, siswa.nama, siswa.emoji);
+            } else {
+                tampilkanGreetingDanSimpan(cleanBarcode, "Teman Baru (" + cleanBarcode + ")", "✨");
+            }
+        }
+
+        function tampilkanGreetingDanSimpan(barcode, nama, emoji) {
+            const overlay = document.getElementById('greetingOverlay');
+            const txtUtama = document.getElementById('greetingMessage');
+            const txtSub = document.getElementById('subGreetingMessage');
+            const elEmoji = document.getElementById('avatarEmoji');
+            const loadStatus = document.getElementById('loadingStatus');
+
+            const ucapanAcak = ucapanSemangat[Math.floor(Math.random() * ucapanSemangat.length)];
+
+            elEmoji.innerText = emoji;
+            txtUtama.innerText = `Selamat Pagi, ${nama}! ✨`;
+            txtSub.innerText = nama.includes("Teman Baru") ? "Yuk lapor ke Ibu Guru untuk didaftarkan kartunya." : ucapanAcak;
+            loadStatus.innerText = "⏳ Sedang mencatat kehadiran...";
+
+            overlay.classList.add('active');
+
+            // --- BAGIAN YANG DIUBAH: SEBUTAN GREETING SENSASI GOOGLE TRANSLATE CEWE ---
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                // Format kalimat persis sesuai yang kamu minta
+                const kalimatSuara = `Selamat pagi ${nama}, apakah sudah siap untuk sekolah? Semangat ${nama} belajarnya hari ini!`;
+                const utterance = new SpeechSynthesisUtterance(kalimatSuara);
+                
+                if (suaraList.length === 0) suaraList = window.speechSynthesis.getVoices();
+                
+                // Mencari database suara perempuan Google Indonesia / Natural lokal
+                const suaraGoogleIndo = suaraList.find(v => 
+                    v.lang.toLowerCase().includes('id') && 
+                    (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural'))
+                );
+                
+                const suaraLokalIndo = suaraList.find(v => v.lang.toLowerCase().includes('id'));
+
+                if (suaraGoogleIndo) {
+                    utterance.voice = suaraGoogleIndo;
+                } else if (suaraLokalIndo) {
+                    utterance.voice = suaraLokalIndo;
+                } else {
+                    utterance.lang = 'id-ID';
+                }
+                
+                utterance.pitch = 1.15; // Setelan pitch ramah khas guru TK perempuan
+                utterance.rate = 0.95;  // Kecepatan artikulasi pas agar anak kecil paham
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // --- VALIDASI LINK DAN FETCH KE EXCEL GMAIL PRIBADI ---
+            if (WEB_APP_URL !== "PASTE_URL_APPS_SCRIPT_DI_SINI") {
+                const dataKirim = new URLSearchParams();
+                dataKirim.append('barcode', barcode);
+                dataKirim.append('nama', nama);
+
+                fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: dataKirim
+                })
+                .then(() => { 
+                    loadStatus.innerText = "✅ Kehadiran berhasil dicatat!"; 
+                })
+                .catch(err => { 
+                    loadStatus.innerText = "❌ Gagal mencatat otomatis."; 
+                });
+            } else {
+                loadStatus.innerText = "⚠️ URL Google Sheets belum dipasang.";
+            }
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                setTimeout(() => {
+                    isProcessing = false;
+                }, 1500);
+            }, 6000); 
+        }
+    </script>
+</body>
+</html>
